@@ -1,36 +1,40 @@
-import { useDroppable } from '@dnd-kit/core'
-import ActivityCard from './ActivityCard'
+import { useDroppable } from '@dnd-kit/core'; // 1. Importação necessária
+import ActivityCard from './ActivityCard';
 
-export default function KanbanColumn({ column, activities, onDelete }) {
-  const { setNodeRef, isOver } = useDroppable({ id: column.id })
+export default function KanbanColumn({ column, activities, onEdit, onDelete }) {
+  // 2. Registra a coluna como área de soltura (drop)
+  const { setNodeRef } = useDroppable({
+    id: column.id, // O ID será 'TODO', 'DOING' ou 'DONE'
+  });
 
   return (
-    <div
-      ref={setNodeRef}
-      className={`${column.color} rounded-xl p-4 min-h-64 transition ${isOver ? 'ring-2 ring-blue-400' : ''}`}
+    <div 
+      ref={setNodeRef} // 3. Aplica a referência aqui!
+      className={`rounded-xl p-4 min-h-[500px] transition-colors ${column.color}`}
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex justify-between items-center mb-4">
         <h2 className="font-bold text-gray-700">{column.label}</h2>
-        <span className="bg-white text-gray-600 text-xs font-bold px-2 py-1 rounded-full">
+        <span className="bg-white/50 px-2 py-0.5 rounded-full text-xs font-bold">
           {activities.length}
         </span>
       </div>
 
       <div className="flex flex-col gap-3">
-        {activities.map(activity => (
+        {activities.map((activity) => (
           <ActivityCard
             key={activity.id}
             activity={activity}
+            onEdit={onEdit}
             onDelete={onDelete}
           />
         ))}
+        
+        {activities.length === 0 && (
+          <div className="text-gray-400 text-center py-10 border-2 border-dashed border-gray-200 rounded-lg">
+            Solte aqui
+          </div>
+        )}
       </div>
-
-      {activities.length === 0 && (
-        <div className="text-center text-gray-400 mt-8">
-          <p className="text-sm">Solte aqui</p>
-        </div>
-      )}
     </div>
-  )
+  );
 }
